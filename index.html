@@ -1,53 +1,43 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Lähetä viesti</title>
+  <title>Yhteydenottolomake</title>
 </head>
 <body>
-  <h1>Ota yhteyttä</h1>
-  <form id="contactForm">
-    <label for="nimi">Nimi:</label><br>
-    <input type="text" id="nimi" name="nimi" required><br><br>
-
-    <label for="email">Sähköposti:</label><br>
-    <input type="email" id="email" name="email" required><br><br>
-
-    <label for="viesti">Viesti:</label><br>
-    <textarea id="viesti" name="viesti" required></textarea><br><br>
-
+  <h2>Ota yhteyttä</h2>
+  <form id="contact-form">
+    <label>Nimi:</label><br>
+    <input type="text" id="nimi" required><br><br>
+    <label>Sähköposti:</label><br>
+    <input type="email" id="email" required><br><br>
+    <label>Viesti:</label><br>
+    <textarea id="viesti" required></textarea><br><br>
     <button type="submit">Lähetä</button>
   </form>
 
-  <p id="vastaus"></p>
+  <p id="response"></p>
 
   <script>
-    document.getElementById('contactForm').addEventListener('submit', function(e) {
+    const form = document.getElementById('contact-form');
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      var data = {
+      const data = {
         nimi: document.getElementById('nimi').value,
         email: document.getElementById('email').value,
         viesti: document.getElementById('viesti').value
       };
 
-      fetch('https://script.google.com/macros/s/AKfycbzT49VypTs6kGEPmxlU05UxCADlNSE5yb34JXSEKyabeRS_IsejugAD_nDB61TQrF90iw/exec', {
+      const response = await fetch('https://script.google.com/macros/s/AKfycbxJAK63sHc_woOCb1uHexghMiV-gn1KhP5qZOlEwcqOeLaHRHWIMldR0bdH_L9bT28S8w/exec käyttöönotto url', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
-      })
-      .then(response => response.json())
-      .then(result => {
-        if (result.status === 'success') {
-          document.getElementById('vastaus').innerText = 'Viesti lähetetty onnistuneesti!';
-        } else {
-          document.getElementById('vastaus').innerText = 'Virhe: ' + result.message;
-        }
-      })
-      .catch(error => {
-        document.getElementById('vastaus').innerText = 'Verkkovirhe: ' + error;
       });
+
+      const result = await response.json();
+      document.getElementById('response').innerText = result.status === "success" 
+        ? "Viesti lähetetty onnistuneesti!" 
+        : "Virhe: " + result.message;
     });
   </script>
 </body>
