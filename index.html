@@ -1,54 +1,52 @@
 <!DOCTYPE html>
-<html lang="fi">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Ilmoittautuminen Webinaariin</title>
+  <title>Lähetä viesti</title>
 </head>
 <body>
-  <h1>Ilmoittaudu maksuttomaan webinaariin</h1>
-  <form id="signup-form">
+  <h1>Ota yhteyttä</h1>
+  <form id="contactForm">
     <label for="nimi">Nimi:</label><br>
     <input type="text" id="nimi" name="nimi" required><br><br>
 
     <label for="email">Sähköposti:</label><br>
     <input type="email" id="email" name="email" required><br><br>
 
-    <label for="viesti">Viesti (valinnainen):</label><br>
-    <textarea id="viesti" name="viesti"></textarea><br><br>
+    <label for="viesti">Viesti:</label><br>
+    <textarea id="viesti" name="viesti" required></textarea><br><br>
 
-    <button type="submit">Ilmoittaudu</button>
+    <button type="submit">Lähetä</button>
   </form>
 
-  <p id="response"></p>
+  <p id="vastaus"></p>
 
   <script>
-    const form = document.getElementById('signup-form');
-    const responseEl = document.getElementById('response');
-
-    form.addEventListener('submit', function (e) {
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
       e.preventDefault();
 
-      const data = {
+      var data = {
         nimi: document.getElementById('nimi').value,
         email: document.getElementById('email').value,
         viesti: document.getElementById('viesti').value
       };
 
-      fetch('https://script.google.com/macros/s/AKfycbwLxQCiDYjujMapcP0RP5QNOVqQG_TrN0LiUHOy_EOZkRdC2WbXJmXdHlybjPjlLZzTvw/exec', {
+      fetch('https://script.google.com/macros/s/AKfycbzT49VypTs6kGEPmxlU05UxCADlNSE5yb34JXSEKyabeRS_IsejugAD_nDB61TQrF90iw/exec', {
         method: 'POST',
-        mode: 'no-cors', // Koska Google Script ei vastaa CORS:ia varten
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
       })
-      .then(() => {
-        responseEl.innerText = 'Kiitos ilmoittautumisesta!';
-        form.reset();
+      .then(response => response.json())
+      .then(result => {
+        if (result.status === 'success') {
+          document.getElementById('vastaus').innerText = 'Viesti lähetetty onnistuneesti!';
+        } else {
+          document.getElementById('vastaus').innerText = 'Virhe: ' + result.message;
+        }
       })
-      .catch((error) => {
-        console.error('Virhe:', error);
-        responseEl.innerText = 'Ilmoittautuminen epäonnistui. Yritä myöhemmin uudelleen.';
+      .catch(error => {
+        document.getElementById('vastaus').innerText = 'Verkkovirhe: ' + error;
       });
     });
   </script>
